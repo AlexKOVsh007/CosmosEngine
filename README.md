@@ -22,10 +22,10 @@ Vulkan: сначала руками разбиралась каждая дета
 
 ## Требования
 
-Linux, g++ с поддержкой C++23, CMake:
+Linux, компилятор с поддержкой C++23 (проверено на GCC 14), CMake 3.16+:
 
 ```bash
-sudo apt install cmake libvulkan-dev vulkan-tools vulkan-validationlayers \
+sudo apt install cmake g++-14 libvulkan-dev vulkan-tools vulkan-validationlayers \
      libglfw3-dev glslang-tools libvulkan-memory-allocator-dev pkg-config
 ```
 
@@ -35,10 +35,13 @@ sudo apt install cmake libvulkan-dev vulkan-tools vulkan-validationlayers \
 ## Сборка
 
 ```bash
-cmake -B build
+cmake -B build -DCMAKE_CXX_COMPILER=g++-14
 cmake --build build
-./bin/app
+./bin/cosmos
 ```
+
+Шейдеры компилируются вместе с кодом: правишь `.vert` — следующая
+сборка сама обновит `.spv`.
 
 ## Архитектура
 
