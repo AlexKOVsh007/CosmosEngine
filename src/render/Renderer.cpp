@@ -3,6 +3,7 @@
 #include "vk/Commands.hpp"
 #include "vk/Context.hpp"
 #include "vk/Framebuffers.hpp"
+#include "vk/Pipeline.hpp"
 #include "vk/RenderPass.hpp"
 #include "vk/Swapchain.hpp"
 
@@ -18,11 +19,12 @@ constexpr uint32_t framesInFlight = 1;
 
 Renderer::Renderer(const Context& ctx, const Swapchain& swapchainRef,
                    const RenderPass& renderPassRef, const Framebuffers& framebuffersRef,
-                   const Commands& commands)
+                   const Pipeline& pipelineRef, const Commands& commands)
     : context(&ctx),
       swapchain(&swapchainRef),
       renderPass(&renderPassRef),
-      framebuffers(&framebuffersRef) {
+      framebuffers(&framebuffersRef),
+      pipeline(&pipelineRef) {
     frames.reserve(framesInFlight);
     for (uint32_t i = 0; i < framesInFlight; ++i) {
         frames.emplace_back(ctx, commands);
@@ -112,6 +114,27 @@ void Renderer::recordCommands(VkCommandBuffer commandBuffer, uint32_t imageIndex
 
     // Заливка происходит здесь: она описана в render pass как loadOp.
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      pipeline->getHandle());
+
+    const VkExtent2D extent = swapchain->getExtent();
+    const VkViewport viewport{
+        .x = 0.0f,
+        .y = 0.0f,
+        .width = static_cast<float>(extent.width),
+        .height = static_cast<float>(extent.height),
+        .minDepth = 0.0f,
+        .maxDepth = 1.0f,
+    };
+    const VkRect2D scissor{.offset{0, 0}, .extent = extent};
+
+    vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+    vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+
+    // Три вершины, один экземпляр: геометрия зашита в вершинный шейдер.
+    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+
     vkCmdEndRenderPass(commandBuffer);
 
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {

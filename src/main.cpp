@@ -3,7 +3,9 @@
 #include "vk/Commands.hpp"
 #include "vk/Context.hpp"
 #include "vk/Framebuffers.hpp"
+#include "vk/Pipeline.hpp"
 #include "vk/RenderPass.hpp"
+#include "vk/Shader.hpp"
 #include "vk/Swapchain.hpp"
 
 #include <cstdlib>
@@ -16,8 +18,14 @@ int main() {
         Swapchain swapchain(context);
         RenderPass renderPass(context, swapchain.getImageFormat());
         Framebuffers framebuffers(context, renderPass, swapchain);
+
+        Shader vertexShader(context, "shaders/vert.spv");
+        Shader fragmentShader(context, "shaders/frag.spv");
+        Pipeline pipeline(context, renderPass, vertexShader, fragmentShader);
+
         Commands commands(context);
-        Renderer renderer(context, swapchain, renderPass, framebuffers, commands);
+        Renderer renderer(context, swapchain, renderPass, framebuffers, pipeline,
+                          commands);
 
         while (!window.shouldClose()) {
             window.pollEvents();
