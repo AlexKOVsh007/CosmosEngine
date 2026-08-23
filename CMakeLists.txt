@@ -31,6 +31,7 @@ set(COSMOS_SOURCES
     src/vk/RenderPass.cpp
     src/vk/Framebuffers.cpp
     src/vk/Commands.cpp
+    src/render/Frame.cpp
 )
 
 add_executable(cosmos ${COSMOS_SOURCES})
