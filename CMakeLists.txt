@@ -28,6 +28,7 @@ set(COSMOS_SOURCES
     src/core/Window.cpp
     src/vk/Context.cpp
     src/vk/Swapchain.cpp
+    src/vk/RenderPass.cpp
 )
 
 add_executable(cosmos ${COSMOS_SOURCES})
