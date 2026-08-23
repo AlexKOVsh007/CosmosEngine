@@ -1,5 +1,6 @@
 #include "core/Window.hpp"
 #include "vk/Context.hpp"
+#include "vk/Commands.hpp"
 #include "vk/Framebuffers.hpp"
 #include "vk/RenderPass.hpp"
 #include "vk/Swapchain.hpp"
@@ -14,6 +15,7 @@ int main() {
         Swapchain swapchain(context);
         RenderPass renderPass(context, swapchain.getImageFormat());
         Framebuffers framebuffers(context, renderPass, swapchain);
+        Commands commands(context);
 
         while (!window.shouldClose()) {
             window.pollEvents();

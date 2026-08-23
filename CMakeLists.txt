@@ -30,6 +30,7 @@ set(COSMOS_SOURCES
     src/vk/Swapchain.cpp
     src/vk/RenderPass.cpp
     src/vk/Framebuffers.cpp
+    src/vk/Commands.cpp
 )
 
 add_executable(cosmos ${COSMOS_SOURCES})
