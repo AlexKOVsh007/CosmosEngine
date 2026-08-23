@@ -1,6 +1,7 @@
 #include "core/Window.hpp"
-#include "vk/Context.hpp"
+#include "render/Renderer.hpp"
 #include "vk/Commands.hpp"
+#include "vk/Context.hpp"
 #include "vk/Framebuffers.hpp"
 #include "vk/RenderPass.hpp"
 #include "vk/Swapchain.hpp"
@@ -16,9 +17,11 @@ int main() {
         RenderPass renderPass(context, swapchain.getImageFormat());
         Framebuffers framebuffers(context, renderPass, swapchain);
         Commands commands(context);
+        Renderer renderer(context, swapchain, renderPass, framebuffers, commands);
 
         while (!window.shouldClose()) {
             window.pollEvents();
+            renderer.drawFrame();
         }
     } catch (const std::exception& e) {
         std::cerr << "Ошибка: " << e.what() << '\n';
