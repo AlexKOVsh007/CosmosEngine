@@ -14,3 +14,7 @@ compile_commands.json
 
 # Индекс clangd.
 .cache/
+
+# Ассеты: бинарники в истории остаются навсегда и раздувают клон.
+textures/
+models/
