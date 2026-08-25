@@ -27,6 +27,8 @@ set(COSMOS_SOURCES
     src/main.cpp
     src/CosmosEngine.cpp
     src/core/Window.cpp
+    src/core/Camera.cpp
+    src/core/Input.cpp
     src/vk/Context.cpp
     src/vk/Allocator.cpp
     src/vk/Buffer.cpp

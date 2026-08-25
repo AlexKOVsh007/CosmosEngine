@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/Camera.hpp"
+#include "core/Input.hpp"
 #include "core/Window.hpp"
 #include "render/Mesh.hpp"
 #include "render/Renderer.hpp"
@@ -30,6 +32,8 @@ public:
 private:
     // Порядок объявления задаёт создание, а разрушение идёт снизу вверх.
     Window window;
+    Camera camera;
+    Input input;
     Context context;
     Allocator allocator;
     Swapchain swapchain;

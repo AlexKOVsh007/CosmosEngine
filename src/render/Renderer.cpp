@@ -1,5 +1,6 @@
 #include "render/Renderer.hpp"
 
+#include "core/Camera.hpp"
 #include "render/Mesh.hpp"
 #include "render/Texture.hpp"
 #include "render/Uniforms.hpp"
@@ -34,13 +35,15 @@ Renderer::Renderer(const Context& ctx, const Swapchain& swapchainRef,
                    const RenderPass& renderPassRef, const Framebuffers& framebuffersRef,
                    const Pipeline& pipelineRef, const Mesh& meshRef,
                    const Commands& commands, const Allocator& allocator,
-                   const Descriptors& descriptors, const Texture& texture)
+                   const Descriptors& descriptors, const Texture& texture,
+                   const Camera& cameraRef)
     : context(&ctx),
       swapchain(&swapchainRef),
       renderPass(&renderPassRef),
       framebuffers(&framebuffersRef),
       pipeline(&pipelineRef),
       mesh(&meshRef),
+      camera(&cameraRef),
       startTime(std::chrono::steady_clock::now()) {
     frames.reserve(framesInFlight);
     for (uint32_t i = 0; i < framesInFlight; ++i) {
@@ -179,8 +182,7 @@ void Renderer::updateUniforms(const Frame& frame) const {
     UniformBufferObject uniforms{
         .model = glm::rotate(glm::mat4(1.0f), seconds * glm::radians(45.0f),
                              glm::vec3(0.0f, 0.0f, 1.0f)),
-        .view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f),
-                            glm::vec3(0.0f, 0.0f, 1.0f)),
+        .view = camera->getViewMatrix(),
         .projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f),
     };
 

@@ -9,6 +9,7 @@
 #include <vector>
 
 class Allocator;
+class Camera;
 class Commands;
 class Context;
 class Descriptors;
@@ -26,7 +27,8 @@ public:
              const RenderPass& renderPass, const Framebuffers& framebuffers,
              const Pipeline& pipeline, const Mesh& mesh,
              const Commands& commands, const Allocator& allocator,
-             const Descriptors& descriptors, const Texture& texture);
+             const Descriptors& descriptors, const Texture& texture,
+             const Camera& camera);
     ~Renderer();
 
     Renderer(const Renderer&) = delete;
@@ -47,6 +49,7 @@ private:
     const Framebuffers* framebuffers = nullptr;
     const Pipeline* pipeline = nullptr;
     const Mesh* mesh = nullptr;
+    const Camera* camera = nullptr;
 
     std::vector<Frame> frames;
     size_t currentFrame = 0;

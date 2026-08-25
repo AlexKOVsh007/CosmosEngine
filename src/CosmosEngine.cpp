@@ -1,6 +1,7 @@
 #include "CosmosEngine.hpp"
 
 #include <array>
+#include <chrono>
 
 namespace {
 
@@ -32,6 +33,8 @@ constexpr std::array<uint32_t, 18> pyramidIndices{
 
 CosmosEngine::CosmosEngine()
     : window(windowWidth, windowHeight, "Cosmos Engine"),
+      camera({2.0f, 2.0f, 2.0f}, {0.0f, 0.0f, 0.0f}),
+      input(window),
       context(window),
       allocator(context),
       swapchain(context),
@@ -47,11 +50,18 @@ CosmosEngine::CosmosEngine()
       mesh(allocator, commands, pyramidVertices, pyramidIndices),
       texture(context, allocator, commands, "textures/pottery.jpg"),
       renderer(context, swapchain, renderPass, framebuffers, pipeline, mesh, commands,
-               allocator, descriptors, texture) {}
+               allocator, descriptors, texture, camera) {}
 
 void CosmosEngine::run() {
+    auto previous = std::chrono::steady_clock::now();
+
     while (!window.shouldClose()) {
+        const auto now = std::chrono::steady_clock::now();
+        const float delta = std::chrono::duration<float>(now - previous).count();
+        previous = now;
+
         window.pollEvents();
+        input.apply(camera, delta);
         renderer.drawFrame();
     }
 }
