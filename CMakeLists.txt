@@ -25,6 +25,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 # Список ведём руками: file(GLOB) читает папку только на этапе cmake.
 set(COSMOS_SOURCES
     src/main.cpp
+    src/CosmosEngine.cpp
     src/core/Window.cpp
     src/vk/Context.cpp
     src/vk/Swapchain.cpp
