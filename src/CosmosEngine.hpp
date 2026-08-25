@@ -6,6 +6,7 @@
 #include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
 #include "vk/Context.hpp"
+#include "vk/Descriptors.hpp"
 #include "vk/Framebuffers.hpp"
 #include "vk/Pipeline.hpp"
 #include "vk/RenderPass.hpp"
@@ -32,6 +33,7 @@ private:
     Swapchain swapchain;
     RenderPass renderPass;
     Framebuffers framebuffers;
+    Descriptors descriptors;
     Shader vertexShader;
     Shader fragmentShader;
     Pipeline pipeline;

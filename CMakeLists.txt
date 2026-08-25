@@ -34,6 +34,7 @@ set(COSMOS_SOURCES
     src/vk/RenderPass.cpp
     src/vk/Framebuffers.cpp
     src/vk/Commands.cpp
+    src/vk/Descriptors.cpp
     src/vk/Shader.cpp
     src/vk/Pipeline.cpp
     src/render/Mesh.cpp

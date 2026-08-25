@@ -4,11 +4,14 @@
 
 #include <vulkan/vulkan.h>
 
+#include <chrono>
 #include <cstddef>
 #include <vector>
 
+class Allocator;
 class Commands;
 class Context;
+class Descriptors;
 class Framebuffers;
 class Mesh;
 class Pipeline;
@@ -21,7 +24,8 @@ public:
     Renderer(const Context& context, const Swapchain& swapchain,
              const RenderPass& renderPass, const Framebuffers& framebuffers,
              const Pipeline& pipeline, const Mesh& mesh,
-             const Commands& commands);
+             const Commands& commands, const Allocator& allocator,
+             const Descriptors& descriptors);
     ~Renderer();
 
     Renderer(const Renderer&) = delete;
@@ -33,6 +37,7 @@ public:
 
 private:
     void recordCommands(VkCommandBuffer commandBuffer, uint32_t imageIndex) const;
+    void updateUniforms(const Frame& frame) const;
 
     // Доступ без владения.
     const Context* context = nullptr;
@@ -44,4 +49,7 @@ private:
 
     std::vector<Frame> frames;
     size_t currentFrame = 0;
+
+    // Отсчёт для вращения модели.
+    std::chrono::steady_clock::time_point startTime;
 };

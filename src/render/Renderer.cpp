@@ -1,12 +1,17 @@
 #include "render/Renderer.hpp"
 
+#include "render/Mesh.hpp"
+#include "render/Uniforms.hpp"
+#include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
 #include "vk/Context.hpp"
-#include "render/Mesh.hpp"
+#include "vk/Descriptors.hpp"
 #include "vk/Framebuffers.hpp"
 #include "vk/Pipeline.hpp"
 #include "vk/RenderPass.hpp"
 #include "vk/Swapchain.hpp"
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <limits>
 #include <stdexcept>
@@ -21,16 +26,18 @@ constexpr uint32_t framesInFlight = 1;
 Renderer::Renderer(const Context& ctx, const Swapchain& swapchainRef,
                    const RenderPass& renderPassRef, const Framebuffers& framebuffersRef,
                    const Pipeline& pipelineRef, const Mesh& meshRef,
-                   const Commands& commands)
+                   const Commands& commands, const Allocator& allocator,
+                   const Descriptors& descriptors)
     : context(&ctx),
       swapchain(&swapchainRef),
       renderPass(&renderPassRef),
       framebuffers(&framebuffersRef),
       pipeline(&pipelineRef),
-      mesh(&meshRef) {
+      mesh(&meshRef),
+      startTime(std::chrono::steady_clock::now()) {
     frames.reserve(framesInFlight);
     for (uint32_t i = 0; i < framesInFlight; ++i) {
-        frames.emplace_back(ctx, commands);
+        frames.emplace_back(ctx, commands, allocator, descriptors);
     }
 }
 
@@ -53,6 +60,8 @@ void Renderer::drawFrame() {
                           frame.getImageAvailable(), VK_NULL_HANDLE, &imageIndex);
 
     vkResetFences(device, 1, &inFlight);
+
+    updateUniforms(frame);
 
     VkCommandBuffer commandBuffer = frame.getCommandBuffer();
     vkResetCommandBuffer(commandBuffer, 0);
@@ -135,6 +144,10 @@ void Renderer::recordCommands(VkCommandBuffer commandBuffer, uint32_t imageIndex
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
+    const VkDescriptorSet set = frames[currentFrame].getDescriptorSet();
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                            pipeline->getLayout(), 0, 1, &set, 0, nullptr);
+
     const VkBuffer vertexBuffers[]{mesh->getVertexBuffer()};
     const VkDeviceSize offsets[]{0};
 
@@ -147,4 +160,25 @@ void Renderer::recordCommands(VkCommandBuffer commandBuffer, uint32_t imageIndex
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
         throw std::runtime_error("vkEndCommandBuffer failed");
     }
+}
+
+void Renderer::updateUniforms(const Frame& frame) const {
+    const float seconds =
+        std::chrono::duration<float>(std::chrono::steady_clock::now() - startTime).count();
+
+    const VkExtent2D extent = swapchain->getExtent();
+    const float aspect = static_cast<float>(extent.width) / static_cast<float>(extent.height);
+
+    UniformBufferObject uniforms{
+        .model = glm::rotate(glm::mat4(1.0f), seconds * glm::radians(45.0f),
+                             glm::vec3(0.0f, 0.0f, 1.0f)),
+        .view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f),
+                            glm::vec3(0.0f, 0.0f, 1.0f)),
+        .projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f),
+    };
+
+    // GLM считает по правилам OpenGL, где ось Y экрана направлена вверх.
+    uniforms.projection[1][1] *= -1.0f;
+
+    frame.getUniformBuffer().write(&uniforms, sizeof(uniforms));
 }

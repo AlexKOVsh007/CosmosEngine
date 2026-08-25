@@ -2,6 +2,7 @@
 
 #include "scene/Vertex.hpp"
 #include "vk/Context.hpp"
+#include "vk/Descriptors.hpp"
 #include "vk/RenderPass.hpp"
 #include "vk/Shader.hpp"
 
@@ -9,7 +10,7 @@
 #include <stdexcept>
 
 Pipeline::Pipeline(const Context& ctx, const RenderPass& renderPass, const Shader& vertex,
-                   const Shader& fragment)
+                   const Shader& fragment, const Descriptors& descriptors)
     : context(&ctx) {
     const std::array<VkPipelineShaderStageCreateInfo, 2> stages{
         VkPipelineShaderStageCreateInfo{
@@ -89,9 +90,12 @@ Pipeline::Pipeline(const Context& ctx, const RenderPass& renderPass, const Shade
         .pAttachments = &colorBlendAttachment,
     };
 
-    // Описывает ресурсы, доступные шейдерам; пока их нет.
+    // Descriptor set layout: какие ресурсы будут доступны шейдерам.
+    const VkDescriptorSetLayout setLayout = descriptors.getLayout();
     const VkPipelineLayoutCreateInfo layoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .setLayoutCount = 1,
+        .pSetLayouts = &setLayout,
     };
 
     if (vkCreatePipelineLayout(ctx.getDevice(), &layoutInfo, nullptr, &layout) !=

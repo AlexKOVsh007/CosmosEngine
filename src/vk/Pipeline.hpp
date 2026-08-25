@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 
 class Context;
+class Descriptors;
 class RenderPass;
 class Shader;
 
@@ -10,7 +11,7 @@ class Shader;
 class Pipeline {
 public:
     Pipeline(const Context& context, const RenderPass& renderPass, const Shader& vertex,
-             const Shader& fragment);
+             const Shader& fragment, const Descriptors& descriptors);
     ~Pipeline();
 
     Pipeline(const Pipeline&) = delete;

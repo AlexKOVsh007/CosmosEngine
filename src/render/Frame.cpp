@@ -1,13 +1,21 @@
 #include "render/Frame.hpp"
 
+#include "render/Uniforms.hpp"
+#include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
+#include "vk/Descriptors.hpp"
 #include "vk/Context.hpp"
 
 #include <stdexcept>
 #include <utility>
 
-Frame::Frame(const Context& ctx, const Commands& commands) : context(&ctx) {
+Frame::Frame(const Context& ctx, const Commands& commands,
+             const Allocator& allocator, const Descriptors& descriptors)
+    : context(&ctx),
+      uniformBuffer(Buffer::uniform(allocator, sizeof(UniformBufferObject))),
+      descriptorSet(descriptors.allocate()) {
     commandBuffer = commands.allocate(1).front();
+    descriptors.bindUniform(descriptorSet, 0, uniformBuffer);
 
     const VkSemaphoreCreateInfo semaphoreInfo{
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
@@ -47,7 +55,9 @@ Frame::Frame(Frame&& other) noexcept
       commandBuffer(std::exchange(other.commandBuffer, VK_NULL_HANDLE)),
       imageAvailable(std::exchange(other.imageAvailable, VK_NULL_HANDLE)),
       renderFinished(std::exchange(other.renderFinished, VK_NULL_HANDLE)),
-      inFlight(std::exchange(other.inFlight, VK_NULL_HANDLE)) {}
+      inFlight(std::exchange(other.inFlight, VK_NULL_HANDLE)),
+      uniformBuffer(std::move(other.uniformBuffer)),
+      descriptorSet(std::exchange(other.descriptorSet, VK_NULL_HANDLE)) {}
 
 Frame& Frame::operator=(Frame&& other) noexcept {
     if (this != &other) {
@@ -57,6 +67,8 @@ Frame& Frame::operator=(Frame&& other) noexcept {
         imageAvailable = std::exchange(other.imageAvailable, VK_NULL_HANDLE);
         renderFinished = std::exchange(other.renderFinished, VK_NULL_HANDLE);
         inFlight = std::exchange(other.inFlight, VK_NULL_HANDLE);
+        uniformBuffer = std::move(other.uniformBuffer);
+        descriptorSet = std::exchange(other.descriptorSet, VK_NULL_HANDLE);
     }
     return *this;
 }
