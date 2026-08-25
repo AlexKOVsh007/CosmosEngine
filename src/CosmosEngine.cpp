@@ -10,6 +10,7 @@ constexpr uint32_t windowHeight = 600;
 CosmosEngine::CosmosEngine()
     : window(windowWidth, windowHeight, "Cosmos Engine"),
       context(window),
+      allocator(context),
       swapchain(context),
       renderPass(context, swapchain.getImageFormat()),
       framebuffers(context, renderPass, swapchain),

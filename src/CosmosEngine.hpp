@@ -2,6 +2,7 @@
 
 #include "core/Window.hpp"
 #include "render/Renderer.hpp"
+#include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
 #include "vk/Context.hpp"
 #include "vk/Framebuffers.hpp"
@@ -26,6 +27,7 @@ private:
     // Порядок объявления задаёт создание, а разрушение идёт снизу вверх.
     Window window;
     Context context;
+    Allocator allocator;
     Swapchain swapchain;
     RenderPass renderPass;
     Framebuffers framebuffers;
