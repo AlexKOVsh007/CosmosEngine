@@ -6,6 +6,7 @@
 #include <vector>
 
 class Context;
+class Image;
 class RenderPass;
 class Swapchain;
 
@@ -13,7 +14,7 @@ class Swapchain;
 class Framebuffers {
 public:
     Framebuffers(const Context& context, const RenderPass& renderPass,
-                 const Swapchain& swapchain);
+                 const Swapchain& swapchain, const Image& depth);
     ~Framebuffers();
 
     Framebuffers(const Framebuffers&) = delete;

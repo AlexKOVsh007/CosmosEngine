@@ -76,6 +76,16 @@ Pipeline::Pipeline(const Context& ctx, const RenderPass& renderPass, const Shade
         .sampleShadingEnable = VK_FALSE,
     };
 
+    // LESS: фрагмент виден, если он ближе уже записанного.
+    const VkPipelineDepthStencilStateCreateInfo depthStencil{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+        .depthTestEnable = VK_TRUE,
+        .depthWriteEnable = VK_TRUE,
+        .depthCompareOp = VK_COMPARE_OP_LESS,
+        .depthBoundsTestEnable = VK_FALSE,
+        .stencilTestEnable = VK_FALSE,
+    };
+
     // Без смешивания новый цвет просто заменяет старый.
     const VkPipelineColorBlendAttachmentState colorBlendAttachment{
         .blendEnable = VK_FALSE,
@@ -112,6 +122,7 @@ Pipeline::Pipeline(const Context& ctx, const RenderPass& renderPass, const Shade
         .pViewportState = &viewportState,
         .pRasterizationState = &rasterizer,
         .pMultisampleState = &multisampling,
+        .pDepthStencilState = &depthStencil,
         .pColorBlendState = &colorBlending,
         .pDynamicState = &dynamicState,
         .layout = layout,

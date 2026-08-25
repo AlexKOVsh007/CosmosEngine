@@ -30,6 +30,7 @@ set(COSMOS_SOURCES
     src/vk/Context.cpp
     src/vk/Allocator.cpp
     src/vk/Buffer.cpp
+    src/vk/Image.cpp
     src/vk/Swapchain.cpp
     src/vk/RenderPass.cpp
     src/vk/Framebuffers.cpp

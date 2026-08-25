@@ -13,12 +13,18 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <array>
+
 #include <limits>
 #include <stdexcept>
 
 namespace {
 
-constexpr VkClearValue clearColor{{{0.05f, 0.07f, 0.16f, 1.0f}}};
+// Порядок совпадает с порядком attachment'ов в render pass.
+constexpr std::array<VkClearValue, 2> clearValues{
+    VkClearValue{.color{{0.05f, 0.07f, 0.16f, 1.0f}}},
+    VkClearValue{.depthStencil{.depth = 1.0f, .stencil = 0}},
+};
 constexpr uint32_t framesInFlight = 1;
 
 }  // namespace
@@ -120,8 +126,8 @@ void Renderer::recordCommands(VkCommandBuffer commandBuffer, uint32_t imageIndex
             .offset{0, 0},
             .extent = swapchain->getExtent(),
         },
-        .clearValueCount = 1,
-        .pClearValues = &clearColor,
+        .clearValueCount = static_cast<uint32_t>(clearValues.size()),
+        .pClearValues = clearValues.data(),
     };
 
     // Заливка происходит здесь: она описана в render pass как loadOp.

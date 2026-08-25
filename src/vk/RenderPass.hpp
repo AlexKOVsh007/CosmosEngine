@@ -7,7 +7,7 @@ class Context;
 // Какие attachment'ы участвуют в проходе и что с ними делать до и после.
 class RenderPass {
 public:
-    RenderPass(const Context& context, VkFormat colorFormat);
+    RenderPass(const Context& context, VkFormat colorFormat, VkFormat depthFormat);
     ~RenderPass();
 
     RenderPass(const RenderPass&) = delete;

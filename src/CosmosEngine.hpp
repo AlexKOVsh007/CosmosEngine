@@ -8,6 +8,7 @@
 #include "vk/Context.hpp"
 #include "vk/Descriptors.hpp"
 #include "vk/Framebuffers.hpp"
+#include "vk/Image.hpp"
 #include "vk/Pipeline.hpp"
 #include "vk/RenderPass.hpp"
 #include "vk/Shader.hpp"
@@ -31,6 +32,7 @@ private:
     Context context;
     Allocator allocator;
     Swapchain swapchain;
+    Image depthImage;
     RenderPass renderPass;
     Framebuffers framebuffers;
     Descriptors descriptors;
