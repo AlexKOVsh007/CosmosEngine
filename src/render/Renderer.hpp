@@ -10,6 +10,7 @@
 class Commands;
 class Context;
 class Framebuffers;
+class Mesh;
 class Pipeline;
 class RenderPass;
 class Swapchain;
@@ -19,7 +20,8 @@ class Renderer {
 public:
     Renderer(const Context& context, const Swapchain& swapchain,
              const RenderPass& renderPass, const Framebuffers& framebuffers,
-             const Pipeline& pipeline, const Commands& commands);
+             const Pipeline& pipeline, const Mesh& mesh,
+             const Commands& commands);
     ~Renderer();
 
     Renderer(const Renderer&) = delete;
@@ -38,6 +40,7 @@ private:
     const RenderPass* renderPass = nullptr;
     const Framebuffers* framebuffers = nullptr;
     const Pipeline* pipeline = nullptr;
+    const Mesh* mesh = nullptr;
 
     std::vector<Frame> frames;
     size_t currentFrame = 0;

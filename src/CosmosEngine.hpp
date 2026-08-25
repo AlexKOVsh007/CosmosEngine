@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/Window.hpp"
+#include "render/Mesh.hpp"
 #include "render/Renderer.hpp"
 #include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
@@ -35,5 +36,6 @@ private:
     Shader fragmentShader;
     Pipeline pipeline;
     Commands commands;
+    Mesh mesh;
     Renderer renderer;
 };

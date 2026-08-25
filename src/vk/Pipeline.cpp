@@ -1,5 +1,6 @@
 #include "vk/Pipeline.hpp"
 
+#include "scene/Vertex.hpp"
 #include "vk/Context.hpp"
 #include "vk/RenderPass.hpp"
 #include "vk/Shader.hpp"
@@ -25,9 +26,15 @@ Pipeline::Pipeline(const Context& ctx, const RenderPass& renderPass, const Shade
         },
     };
 
-    // Вершины пока приходят из констант в шейдере, описывать нечего.
+    const VkVertexInputBindingDescription binding = Vertex::bindingDescription();
+    const auto attributes = Vertex::attributeDescriptions();
+
     const VkPipelineVertexInputStateCreateInfo vertexInput{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+        .vertexBindingDescriptionCount = 1,
+        .pVertexBindingDescriptions = &binding,
+        .vertexAttributeDescriptionCount = static_cast<uint32_t>(attributes.size()),
+        .pVertexAttributeDescriptions = attributes.data(),
     };
 
     // Каждые три вершины — отдельный треугольник.

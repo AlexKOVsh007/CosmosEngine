@@ -22,6 +22,10 @@ public:
     // Освобождать не нужно: буферы умирают вместе с пулом.
     std::vector<VkCommandBuffer> allocate(uint32_t count) const;
 
+    // Для разовых операций вроде копирования: записать, отправить, дождаться.
+    VkCommandBuffer beginSingleTime() const;
+    void endSingleTime(VkCommandBuffer commandBuffer) const;
+
 private:
     // Доступ без владения.
     const Context* context = nullptr;

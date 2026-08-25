@@ -37,3 +37,32 @@ std::vector<VkCommandBuffer> Commands::allocate(uint32_t count) const {
     }
     return buffers;
 }
+
+VkCommandBuffer Commands::beginSingleTime() const {
+    VkCommandBuffer commandBuffer = allocate(1).front();
+
+    const VkCommandBufferBeginInfo beginInfo{
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        // Драйвер знает, что буфер одноразовый, и не тратится на переиспользование.
+        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+    };
+    vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+    return commandBuffer;
+}
+
+void Commands::endSingleTime(VkCommandBuffer commandBuffer) const {
+    vkEndCommandBuffer(commandBuffer);
+
+    const VkSubmitInfo submitInfo{
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .commandBufferCount = 1,
+        .pCommandBuffers = &commandBuffer,
+    };
+
+    vkQueueSubmit(context->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+    // Разовая операция: проще дождаться очереди, чем заводить fence.
+    vkQueueWaitIdle(context->getGraphicsQueue());
+
+    vkFreeCommandBuffers(context->getDevice(), pool, 1, &commandBuffer);
+}

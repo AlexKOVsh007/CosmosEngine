@@ -29,12 +29,14 @@ set(COSMOS_SOURCES
     src/core/Window.cpp
     src/vk/Context.cpp
     src/vk/Allocator.cpp
+    src/vk/Buffer.cpp
     src/vk/Swapchain.cpp
     src/vk/RenderPass.cpp
     src/vk/Framebuffers.cpp
     src/vk/Commands.cpp
     src/vk/Shader.cpp
     src/vk/Pipeline.cpp
+    src/render/Mesh.cpp
     src/render/Frame.cpp
     src/render/Renderer.cpp
 )

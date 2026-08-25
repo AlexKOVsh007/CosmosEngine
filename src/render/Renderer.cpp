@@ -2,6 +2,7 @@
 
 #include "vk/Commands.hpp"
 #include "vk/Context.hpp"
+#include "render/Mesh.hpp"
 #include "vk/Framebuffers.hpp"
 #include "vk/Pipeline.hpp"
 #include "vk/RenderPass.hpp"
@@ -19,12 +20,14 @@ constexpr uint32_t framesInFlight = 1;
 
 Renderer::Renderer(const Context& ctx, const Swapchain& swapchainRef,
                    const RenderPass& renderPassRef, const Framebuffers& framebuffersRef,
-                   const Pipeline& pipelineRef, const Commands& commands)
+                   const Pipeline& pipelineRef, const Mesh& meshRef,
+                   const Commands& commands)
     : context(&ctx),
       swapchain(&swapchainRef),
       renderPass(&renderPassRef),
       framebuffers(&framebuffersRef),
-      pipeline(&pipelineRef) {
+      pipeline(&pipelineRef),
+      mesh(&meshRef) {
     frames.reserve(framesInFlight);
     for (uint32_t i = 0; i < framesInFlight; ++i) {
         frames.emplace_back(ctx, commands);
@@ -132,8 +135,12 @@ void Renderer::recordCommands(VkCommandBuffer commandBuffer, uint32_t imageIndex
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-    // Три вершины, один экземпляр: геометрия зашита в вершинный шейдер.
-    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+    const VkBuffer vertexBuffers[]{mesh->getVertexBuffer()};
+    const VkDeviceSize offsets[]{0};
+
+    vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+    vkCmdBindIndexBuffer(commandBuffer, mesh->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+    vkCmdDrawIndexed(commandBuffer, mesh->getIndexCount(), 1, 0, 0, 0);
 
     vkCmdEndRenderPass(commandBuffer);
 
