@@ -17,6 +17,7 @@ class Mesh;
 class Pipeline;
 class RenderPass;
 class Swapchain;
+class Texture;
 
 // Рисует и показывает кадры.
 class Renderer {
@@ -25,7 +26,7 @@ public:
              const RenderPass& renderPass, const Framebuffers& framebuffers,
              const Pipeline& pipeline, const Mesh& mesh,
              const Commands& commands, const Allocator& allocator,
-             const Descriptors& descriptors);
+             const Descriptors& descriptors, const Texture& texture);
     ~Renderer();
 
     Renderer(const Renderer&) = delete;

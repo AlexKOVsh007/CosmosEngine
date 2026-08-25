@@ -45,8 +45,9 @@ CosmosEngine::CosmosEngine()
       pipeline(context, renderPass, vertexShader, fragmentShader, descriptors),
       commands(context),
       mesh(allocator, commands, pyramidVertices, pyramidIndices),
+      texture(context, allocator, commands, "textures/pottery.jpg"),
       renderer(context, swapchain, renderPass, framebuffers, pipeline, mesh, commands,
-               allocator, descriptors) {}
+               allocator, descriptors, texture) {}
 
 void CosmosEngine::run() {
     while (!window.shouldClose()) {

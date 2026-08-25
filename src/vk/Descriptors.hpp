@@ -4,6 +4,7 @@
 
 class Buffer;
 class Context;
+class Texture;
 
 // Описывает, какие ресурсы видит шейдер, и выдаёт наборы с конкретными ресурсами.
 class Descriptors {
@@ -23,6 +24,10 @@ public:
 
     // Связывает набор с конкретным буфером по номеру, который знает шейдер.
     void bindUniform(VkDescriptorSet set, uint32_t binding, const Buffer& buffer) const;
+
+    // Картинка и правила чтения приходят в шейдер одной записью.
+    void bindTexture(VkDescriptorSet set, uint32_t binding,
+                     const Texture& texture) const;
 
 private:
     // Доступ без владения.

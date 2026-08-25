@@ -8,12 +8,14 @@ class Allocator;
 class Commands;
 class Context;
 class Descriptors;
+class Texture;
 
 // Ресурсы одного кадра: команды и синхронизация.
 class Frame {
 public:
     Frame(const Context& context, const Commands& commands,
-          const Allocator& allocator, const Descriptors& descriptors);
+          const Allocator& allocator, const Descriptors& descriptors,
+          const Texture& texture);
     ~Frame();
 
     Frame(const Frame&) = delete;

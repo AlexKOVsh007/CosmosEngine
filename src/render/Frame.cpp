@@ -3,6 +3,7 @@
 #include "render/Uniforms.hpp"
 #include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
+#include "render/Texture.hpp"
 #include "vk/Descriptors.hpp"
 #include "vk/Context.hpp"
 
@@ -10,12 +11,14 @@
 #include <utility>
 
 Frame::Frame(const Context& ctx, const Commands& commands,
-             const Allocator& allocator, const Descriptors& descriptors)
+             const Allocator& allocator, const Descriptors& descriptors,
+             const Texture& texture)
     : context(&ctx),
       uniformBuffer(Buffer::uniform(allocator, sizeof(UniformBufferObject))),
       descriptorSet(descriptors.allocate()) {
     commandBuffer = commands.allocate(1).front();
     descriptors.bindUniform(descriptorSet, 0, uniformBuffer);
+    descriptors.bindTexture(descriptorSet, 1, texture);
 
     const VkSemaphoreCreateInfo semaphoreInfo{
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,

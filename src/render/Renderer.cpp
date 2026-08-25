@@ -1,6 +1,7 @@
 #include "render/Renderer.hpp"
 
 #include "render/Mesh.hpp"
+#include "render/Texture.hpp"
 #include "render/Uniforms.hpp"
 #include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
@@ -33,7 +34,7 @@ Renderer::Renderer(const Context& ctx, const Swapchain& swapchainRef,
                    const RenderPass& renderPassRef, const Framebuffers& framebuffersRef,
                    const Pipeline& pipelineRef, const Mesh& meshRef,
                    const Commands& commands, const Allocator& allocator,
-                   const Descriptors& descriptors)
+                   const Descriptors& descriptors, const Texture& texture)
     : context(&ctx),
       swapchain(&swapchainRef),
       renderPass(&renderPassRef),
@@ -43,7 +44,7 @@ Renderer::Renderer(const Context& ctx, const Swapchain& swapchainRef,
       startTime(std::chrono::steady_clock::now()) {
     frames.reserve(framesInFlight);
     for (uint32_t i = 0; i < framesInFlight; ++i) {
-        frames.emplace_back(ctx, commands, allocator, descriptors);
+        frames.emplace_back(ctx, commands, allocator, descriptors, texture);
     }
 }
 

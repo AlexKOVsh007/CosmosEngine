@@ -3,6 +3,7 @@
 #include "core/Window.hpp"
 #include "render/Mesh.hpp"
 #include "render/Renderer.hpp"
+#include "render/Texture.hpp"
 #include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
 #include "vk/Context.hpp"
@@ -41,5 +42,6 @@ private:
     Pipeline pipeline;
     Commands commands;
     Mesh mesh;
+    Texture texture;
     Renderer renderer;
 };
