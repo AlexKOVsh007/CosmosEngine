@@ -9,7 +9,9 @@ class Context;
 // Очередь images, в которые рисуем по очереди и показываем на экране.
 class Swapchain {
 public:
-    explicit Swapchain(const Context& context);
+    // На один surface нельзя два swapchain — новый объявляется преемником старого.
+    explicit Swapchain(const Context& context,
+                       VkSwapchainKHR oldSwapchain = VK_NULL_HANDLE);
     ~Swapchain();
 
     Swapchain(const Swapchain&) = delete;

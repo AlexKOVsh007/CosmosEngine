@@ -23,7 +23,7 @@ Window::Window(uint32_t width, uint32_t height, const std::string& title) {
 
     // GLFW родом из OpenGL и по умолчанию создаёт контекст OpenGL — запрещаем.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
     handle = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height),
                               title.c_str(), nullptr, nullptr);
@@ -81,4 +81,16 @@ bool Window::shouldClose() const {
 
 void Window::pollEvents() const {
     glfwPollEvents();
+}
+
+void Window::waitWhileMinimized() const {
+    int width = 0;
+    int height = 0;
+    glfwGetFramebufferSize(handle, &width, &height);
+
+    // waitEvents вместо pollEvents: спим до события, а не крутим цикл впустую.
+    while (width == 0 || height == 0) {
+        glfwWaitEvents();
+        glfwGetFramebufferSize(handle, &width, &height);
+    }
 }

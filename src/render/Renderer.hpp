@@ -36,7 +36,8 @@ public:
     Renderer(Renderer&&) = delete;
     Renderer& operator=(Renderer&&) = delete;
 
-    void drawFrame();
+    // Возвращает true, если swapchain устарел и его пора пересоздать.
+    bool drawFrame();
 
 private:
     void recordCommands(VkCommandBuffer commandBuffer, uint32_t imageIndex) const;

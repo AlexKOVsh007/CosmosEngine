@@ -30,6 +30,9 @@ public:
     void run();
 
 private:
+    // Размер окна изменился: старые кадры и всё, что от них зависит, негодны.
+    void recreateSwapchain();
+
     // Порядок объявления задаёт создание, а разрушение идёт снизу вверх.
     Window window;
     Camera camera;
