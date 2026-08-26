@@ -62,6 +62,21 @@ void CosmosEngine::run() {
 
         window.pollEvents();
         input.apply(camera, delta);
-        renderer.drawFrame();
+
+        if (renderer.drawFrame()) {
+            recreateSwapchain();
+        }
     }
+}
+
+void CosmosEngine::recreateSwapchain() {
+    window.waitWhileMinimized();
+
+    // Трогать ресурсы, пока видеокарта их использует, нельзя.
+    vkDeviceWaitIdle(context.getDevice());
+
+    swapchain = Swapchain(context, swapchain.getHandle());
+    depthImage = Image::depth(context, allocator, swapchain.getExtent().width,
+                              swapchain.getExtent().height);
+    framebuffers = Framebuffers(context, renderPass, swapchain, depthImage);
 }

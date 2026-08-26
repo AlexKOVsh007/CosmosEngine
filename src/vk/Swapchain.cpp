@@ -21,7 +21,7 @@ VkSurfaceFormatKHR chooseFormat(const std::vector<VkSurfaceFormatKHR>& available
 
 }  // namespace
 
-Swapchain::Swapchain(const Context& ctx) : context(&ctx) {
+Swapchain::Swapchain(const Context& ctx, VkSwapchainKHR oldSwapchain) : context(&ctx) {
     VkSurfaceCapabilitiesKHR caps{};
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(ctx.getPhysicalDevice(),
                                               ctx.getSurface(), &caps);
@@ -61,7 +61,7 @@ Swapchain::Swapchain(const Context& ctx) : context(&ctx) {
         // FIFO поддерживается всегда — вертикальная синхронизация.
         .presentMode = VK_PRESENT_MODE_FIFO_KHR,
         .clipped = VK_TRUE,
-        .oldSwapchain = VK_NULL_HANDLE,
+        .oldSwapchain = oldSwapchain,
     };
 
     if (vkCreateSwapchainKHR(ctx.getDevice(), &createInfo, nullptr, &swapchain) !=

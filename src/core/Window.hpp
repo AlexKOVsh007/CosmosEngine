@@ -22,6 +22,9 @@ public:
     bool shouldClose() const;
     void pollEvents() const;
 
+    // У свёрнутого окна нулевой размер: swapchain под него не создать.
+    void waitWhileMinimized() const;
+
     // Отдаём наружу для создания surface: GLFW — не Vulkan, слой не нарушен.
     GLFWwindow* getNativeHandle() const { return handle; }
 

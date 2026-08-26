@@ -56,7 +56,7 @@ Renderer::~Renderer() {
     vkDeviceWaitIdle(context->getDevice());
 }
 
-void Renderer::drawFrame() {
+bool Renderer::drawFrame() {
     constexpr uint64_t noTimeout = std::numeric_limits<uint64_t>::max();
 
     const Frame& frame = frames[currentFrame];
@@ -66,8 +66,17 @@ void Renderer::drawFrame() {
     vkWaitForFences(device, 1, &inFlight, VK_TRUE, noTimeout);
 
     uint32_t imageIndex = 0;
-    vkAcquireNextImageKHR(device, swapchain->getHandle(), noTimeout,
-                          frame.getImageAvailable(), VK_NULL_HANDLE, &imageIndex);
+    const VkResult acquired =
+        vkAcquireNextImageKHR(device, swapchain->getHandle(), noTimeout,
+                              frame.getImageAvailable(), VK_NULL_HANDLE, &imageIndex);
+
+    // Картинку не выдали и семафор не подняли — отправлять работу нельзя.
+    if (acquired == VK_ERROR_OUT_OF_DATE_KHR) {
+        return true;
+    }
+    if (acquired != VK_SUCCESS && acquired != VK_SUBOPTIMAL_KHR) {
+        throw std::runtime_error("vkAcquireNextImageKHR failed");
+    }
 
     vkResetFences(device, 1, &inFlight);
 
@@ -108,9 +117,12 @@ void Renderer::drawFrame() {
         .pImageIndices = &imageIndex,
     };
 
-    vkQueuePresentKHR(context->getGraphicsQueue(), &presentInfo);
+    const VkResult presented = vkQueuePresentKHR(context->getGraphicsQueue(), &presentInfo);
 
     currentFrame = (currentFrame + 1) % frames.size();
+
+    // SUBOPTIMAL: показать удалось, но размеры уже разошлись.
+    return presented == VK_ERROR_OUT_OF_DATE_KHR || presented == VK_SUBOPTIMAL_KHR;
 }
 
 void Renderer::recordCommands(VkCommandBuffer commandBuffer, uint32_t imageIndex) const {
