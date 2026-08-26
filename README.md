@@ -26,7 +26,8 @@ Linux, компилятор с поддержкой C++23 (проверено н
 
 ```bash
 sudo apt install cmake g++-14 libvulkan-dev vulkan-tools vulkan-validationlayers \
-     libglfw3-dev glslang-tools libvulkan-memory-allocator-dev pkg-config
+     libglfw3-dev glslang-tools libvulkan-memory-allocator-dev libglm-dev \
+     libstb-dev pkg-config
 ```
 
 Проверка окружения: `vulkaninfo --summary` должен показать GPU,
@@ -43,6 +44,29 @@ cmake --build build
 Шейдеры компилируются вместе с кодом: правишь `.vert` — следующая
 сборка сама обновит `.spv`.
 
+## Ассеты
+
+Текстуры и модели в репозиторий не входят: бинарник, попавший в историю
+git, остаётся в ней навсегда и раздувает клон. Поэтому папку `textures/`
+нужно наполнить самостоятельно.
+
+Сейчас движок ждёт один файл — `textures/pottery.jpg`. Подойдёт любая
+квадратная картинка, например с [Polyhaven](https://polyhaven.com/textures)
+или [ambientCG](https://ambientcg.com/); достаточно переименовать её
+в `pottery.jpg`. Без файла движок не запустится и честно скажет, чего
+именно не нашёл.
+
+## Управление
+
+```
+клик мышью       захватить курсор
+мышь             осмотреться
+W A S D          движение
+Пробел / Shift   вверх / вниз
+R                вернуться в начальную позицию
+Escape           отпустить курсор
+```
+
 ## Архитектура
 
 Код разделён по **времени жизни** ресурсов, а не по типу вещей.
@@ -54,7 +78,7 @@ core/    Window, Camera, Input                  без единого упоми
 vk/      Context, Swapchain, Allocator, Buffer, Image, Commands,
          RenderPass, Pipeline, Shader, Descriptors
 render/  Renderer, Mesh, Texture, Frame
-scene/   Vertex, Object, Scene
+scene/   Vertex
 ```
 
 Владение однозначное: каждый ресурс принадлежит ровно одному объекту
