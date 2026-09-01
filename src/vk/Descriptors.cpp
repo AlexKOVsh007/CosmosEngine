@@ -12,7 +12,8 @@ Descriptors::Descriptors(const Context& ctx, uint32_t maxSets) : context(&ctx) {
         .binding = 0,
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .descriptorCount = 1,
-        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+        // Матрицы нужны вершинному, позиции света и камеры — фрагментному.
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
     };
 
     const VkDescriptorSetLayoutBinding samplerBinding{

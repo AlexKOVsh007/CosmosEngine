@@ -41,6 +41,7 @@ set(COSMOS_SOURCES
     src/vk/Shader.cpp
     src/vk/Pipeline.cpp
     src/render/Mesh.cpp
+    src/scene/Primitives.cpp
     src/render/Texture.cpp
     src/render/Frame.cpp
     src/render/Renderer.cpp

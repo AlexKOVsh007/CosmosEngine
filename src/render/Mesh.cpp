@@ -1,5 +1,8 @@
 #include "render/Mesh.hpp"
 
+Mesh::Mesh(const Allocator& allocator, const Commands& commands, const MeshData& data)
+    : Mesh(allocator, commands, data.vertices, data.indices) {}
+
 Mesh::Mesh(const Allocator& allocator, const Commands& commands,
            std::span<const Vertex> vertices, std::span<const uint32_t> indices)
     : vertexBuffer(Buffer::vertexFrom(allocator, commands, vertices.data(),
