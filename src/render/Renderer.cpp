@@ -29,6 +29,9 @@ constexpr std::array<VkClearValue, 2> clearValues{
 };
 constexpr uint32_t framesInFlight = 1;
 
+// Источник света стоит сбоку и сверху, чтобы грани освещались по-разному.
+constexpr glm::vec3 lightPosition{2.5f, -2.0f, 2.5f};
+
 }  // namespace
 
 Renderer::Renderer(const Context& ctx, const Swapchain& swapchainRef,
@@ -196,6 +199,8 @@ void Renderer::updateUniforms(const Frame& frame) const {
                              glm::vec3(0.0f, 0.0f, 1.0f)),
         .view = camera->getViewMatrix(),
         .projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f),
+        .lightPosition = glm::vec4(lightPosition, 1.0f),
+        .cameraPosition = glm::vec4(camera->getPosition(), 1.0f),
     };
 
     // GLM считает по правилам OpenGL, где ось Y экрана направлена вверх.

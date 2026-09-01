@@ -9,4 +9,8 @@ struct UniformBufferObject {
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 projection;
+
+    // vec4, а не vec3: по std140 трёхкомпонентный всё равно занял бы 16 байт.
+    glm::vec4 lightPosition;
+    glm::vec4 cameraPosition;
 };

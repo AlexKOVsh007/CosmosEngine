@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene/Vertex.hpp"
+#include "scene/MeshData.hpp"
 #include "vk/Buffer.hpp"
 
 #include <cstdint>
@@ -12,6 +12,8 @@ class Commands;
 // Геометрия в памяти видеокарты: вершины и порядок их обхода.
 class Mesh {
 public:
+    Mesh(const Allocator& allocator, const Commands& commands, const MeshData& data);
+
     Mesh(const Allocator& allocator, const Commands& commands,
          std::span<const Vertex> vertices, std::span<const uint32_t> indices);
 

@@ -6,6 +6,7 @@
 #include "render/Mesh.hpp"
 #include "render/Renderer.hpp"
 #include "render/Texture.hpp"
+#include "scene/Primitives.hpp"
 #include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
 #include "vk/Context.hpp"

@@ -11,6 +11,8 @@ struct Vertex {
     glm::vec3 position;
     glm::vec3 color;
     glm::vec2 texCoord;
+    // Направление наружу от поверхности: по нему считается освещённость.
+    glm::vec3 normal;
 
     // Как читать ленту вершин: с каким шагом и по вершине или по экземпляру.
     static VkVertexInputBindingDescription bindingDescription() {
@@ -22,8 +24,8 @@ struct Vertex {
     }
 
     // Где внутри вершины лежит каждый вход шейдера; связь идёт по номеру location.
-    static std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions() {
-        return std::array<VkVertexInputAttributeDescription, 3>{
+    static std::array<VkVertexInputAttributeDescription, 4> attributeDescriptions() {
+        return std::array<VkVertexInputAttributeDescription, 4>{
             VkVertexInputAttributeDescription{
                 .location = 0,
                 .binding = 0,
@@ -41,6 +43,12 @@ struct Vertex {
                 .binding = 0,
                 .format = VK_FORMAT_R32G32_SFLOAT,
                 .offset = offsetof(Vertex, texCoord),
+            },
+            VkVertexInputAttributeDescription{
+                .location = 3,
+                .binding = 0,
+                .format = VK_FORMAT_R32G32B32_SFLOAT,
+                .offset = offsetof(Vertex, normal),
             },
         };
     }
