@@ -42,6 +42,7 @@ set(COSMOS_SOURCES
     src/vk/Pipeline.cpp
     src/render/Mesh.cpp
     src/scene/Primitives.cpp
+    src/scene/GltfLoader.cpp
     src/render/Texture.cpp
     src/render/Frame.cpp
     src/render/Renderer.cpp
@@ -50,7 +51,8 @@ set(COSMOS_SOURCES
 add_executable(cosmos ${COSMOS_SOURCES})
 
 # Корень включений — src/. Из любого файла: #include "vk/Context.hpp".
-target_include_directories(cosmos PRIVATE src)
+# /usr/include/stb — tinygltf ищет stb_image.h без префикса папки.
+target_include_directories(cosmos PRIVATE src /usr/include/stb)
 
 target_link_libraries(cosmos PRIVATE Vulkan::Vulkan glfw)
 
