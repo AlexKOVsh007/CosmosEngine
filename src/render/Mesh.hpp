@@ -26,8 +26,15 @@ public:
     VkBuffer getIndexBuffer() const { return indexBuffer.getHandle(); }
     uint32_t getIndexCount() const { return indexCount; }
 
+    glm::vec3 getCenter() const { return center; }
+    glm::vec3 getExtent() const { return extent; }
+
 private:
     Buffer vertexBuffer;
     Buffer indexBuffer;
     uint32_t indexCount = 0;
+
+    // Габаритная коробка: по ней сцена приводит модель к своим единицам.
+    glm::vec3 center{0.0f};
+    glm::vec3 extent{1.0f};
 };

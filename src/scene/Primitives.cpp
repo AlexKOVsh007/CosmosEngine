@@ -10,10 +10,9 @@ void addTriangle(MeshData& mesh, glm::vec3 first, glm::vec3 second, glm::vec3 th
     const glm::vec3 normal = glm::normalize(glm::cross(second - first, third - first));
 
     const auto base = static_cast<uint32_t>(mesh.vertices.size());
-    constexpr glm::vec3 white{1.0f, 1.0f, 1.0f};
-    mesh.vertices.push_back({first, white, firstUV, normal});
-    mesh.vertices.push_back({second, white, secondUV, normal});
-    mesh.vertices.push_back({third, white, thirdUV, normal});
+    mesh.vertices.push_back({first, firstUV, normal});
+    mesh.vertices.push_back({second, secondUV, normal});
+    mesh.vertices.push_back({third, thirdUV, normal});
 
     mesh.indices.insert(mesh.indices.end(), {base, base + 1, base + 2});
 }

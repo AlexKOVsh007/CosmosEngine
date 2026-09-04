@@ -6,7 +6,7 @@
 #include "render/Mesh.hpp"
 #include "render/Renderer.hpp"
 #include "render/Texture.hpp"
-#include "scene/Primitives.hpp"
+#include "scene/ModelData.hpp"
 #include "vk/Allocator.hpp"
 #include "vk/Commands.hpp"
 #include "vk/Context.hpp"
@@ -49,6 +49,8 @@ private:
     Shader fragmentShader;
     Pipeline pipeline;
     Commands commands;
+    // Геометрия и путь к текстуре читаются из файла одним проходом.
+    ModelData model;
     Mesh mesh;
     Texture texture;
     Renderer renderer;

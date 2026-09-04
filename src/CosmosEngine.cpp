@@ -1,5 +1,7 @@
 #include "CosmosEngine.hpp"
 
+#include "scene/GltfLoader.hpp"
+
 #include <chrono>
 
 namespace {
@@ -10,11 +12,13 @@ constexpr uint32_t windowHeight = 600;
 // По набору дескрипторов на каждый кадр в полёте.
 constexpr uint32_t framesInFlight = 1;
 
+constexpr const char* modelPath = "models/sylvaxe/scene.gltf";
+
 }  // namespace
 
 CosmosEngine::CosmosEngine()
     : window(windowWidth, windowHeight, "Cosmos Engine"),
-      camera({2.0f, 2.0f, 2.0f}, {0.0f, 0.0f, 0.0f}),
+      camera({2.5f, 2.5f, 1.0f}, {0.0f, 0.0f, 0.0f}),
       input(window),
       context(window),
       allocator(context),
@@ -28,8 +32,9 @@ CosmosEngine::CosmosEngine()
       fragmentShader(context, "shaders/frag.spv"),
       pipeline(context, renderPass, vertexShader, fragmentShader, descriptors),
       commands(context),
-      mesh(allocator, commands, primitives::pyramid()),
-      texture(context, allocator, commands, "textures/pottery_basecolor.jpg"),
+      model(gltf::load(modelPath)),
+      mesh(allocator, commands, model.mesh),
+      texture(context, allocator, commands, model.baseColorTexture),
       renderer(context, swapchain, renderPass, framebuffers, pipeline, mesh, commands,
                allocator, descriptors, texture, camera) {}
 

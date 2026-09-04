@@ -32,6 +32,14 @@ constexpr uint32_t framesInFlight = 1;
 // Источник света стоит сбоку и сверху, чтобы грани освещались по-разному.
 constexpr glm::vec3 lightPosition{2.5f, -2.0f, 2.5f};
 
+// Наибольший габарит модели после приведения: единицы в файле произвольны.
+constexpr float modelSize = 2.0f;
+
+// Формат glTF задаёт вверх +Y, сцена движка живёт с +Z.
+glm::mat4 toSceneAxes() {
+    return glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+}
+
 }  // namespace
 
 Renderer::Renderer(const Context& ctx, const Swapchain& swapchainRef,
@@ -46,8 +54,7 @@ Renderer::Renderer(const Context& ctx, const Swapchain& swapchainRef,
       framebuffers(&framebuffersRef),
       pipeline(&pipelineRef),
       mesh(&meshRef),
-      camera(&cameraRef),
-      startTime(std::chrono::steady_clock::now()) {
+      camera(&cameraRef) {
     frames.reserve(framesInFlight);
     for (uint32_t i = 0; i < framesInFlight; ++i) {
         frames.emplace_back(ctx, commands, allocator, descriptors, texture);
@@ -188,15 +195,16 @@ void Renderer::recordCommands(VkCommandBuffer commandBuffer, uint32_t imageIndex
 }
 
 void Renderer::updateUniforms(const Frame& frame) const {
-    const float seconds =
-        std::chrono::duration<float>(std::chrono::steady_clock::now() - startTime).count();
-
     const VkExtent2D extent = swapchain->getExtent();
     const float aspect = static_cast<float>(extent.width) / static_cast<float>(extent.height);
 
+    const glm::vec3 size = mesh->getExtent();
+    const float scale = modelSize / glm::max(size.x, glm::max(size.y, size.z));
+
+    // Читается справа налево: сдвинуть в начало координат, уменьшить, довернуть оси.
     UniformBufferObject uniforms{
-        .model = glm::rotate(glm::mat4(1.0f), seconds * glm::radians(45.0f),
-                             glm::vec3(0.0f, 0.0f, 1.0f)),
+        .model = toSceneAxes() * glm::scale(glm::mat4(1.0f), glm::vec3(scale)) *
+                 glm::translate(glm::mat4(1.0f), -mesh->getCenter()),
         .view = camera->getViewMatrix(),
         .projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f),
         .lightPosition = glm::vec4(lightPosition, 1.0f),
