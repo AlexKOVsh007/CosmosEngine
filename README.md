@@ -102,6 +102,7 @@ scene/   Vertex
 | 17 | resize | пересоздание swapchain |
 | 18 | lighting | нормали, Blinn-Phong |
 | 19 | models | tinygltf |
+| 19a | formats | OBJ и STL, выбор загрузчика по расширению |
 | 20 | imgui | ползунки для параметров |
 | 21 | shadows | shadow mapping — второй проход |
 | 22 | objects | матрица и дескрипторы на объект |
@@ -122,6 +123,7 @@ scene/   Vertex
 | 37 | msaa | сглаживание |
 | 38 | pbr | физически корректные материалы |
 | 39 | scene file | сцена из файла — вот теперь engine |
+| 39a | fbx | промышленный формат через ufbx |
 | 40 | render graph | барьеры расставляются сами |
 | 41 | dynamic rendering | Vulkan 1.3 без render pass |
 | 42 | bindless | все текстуры разом |
