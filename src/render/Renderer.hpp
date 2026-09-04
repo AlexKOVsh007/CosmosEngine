@@ -4,7 +4,6 @@
 
 #include <vulkan/vulkan.h>
 
-#include <chrono>
 #include <cstddef>
 #include <vector>
 
@@ -54,7 +53,4 @@ private:
 
     std::vector<Frame> frames;
     size_t currentFrame = 0;
-
-    // Отсчёт для вращения модели.
-    std::chrono::steady_clock::time_point startTime;
 };
