@@ -17,6 +17,9 @@ Vulkan: сначала руками разбиралась каждая дета
 - Swapchain, render pass, graphics pipeline
 - Буфер глубины, MVP-матрицы, свободная камера (WASD + мышь)
 - Текстуры: staging, layout-переходы барьерами, мип-пирамида, анизотропия
+- Загрузка моделей glTF: геометрия и карта цвета из файла, приведение
+  к единицам и осям сцены
+- Освещение по Блинну-Фонгу
 - Управление видеопамятью через VMA: суб-аллокация, выбор памяти
   по намерению вместо ручного перебора типов
 
@@ -46,19 +49,25 @@ cmake --build build
 
 ## Ассеты
 
-Текстуры и модели в репозиторий не входят: бинарник, попавший в историю
-git, остаётся в ней навсегда и раздувает клон. Поэтому папку `textures/`
+Модели и текстуры в репозиторий не входят: бинарник, попавший в историю
+git, остаётся в ней навсегда и раздувает клон. Поэтому папку `models/`
 нужно наполнить самостоятельно.
 
-Сейчас движок ждёт один файл — `textures/pottery_basecolor.jpg`. Подойдёт
-любая квадратная картинка, например с [Polyhaven](https://polyhaven.com/textures),
-[ambientCG](https://ambientcg.com/) или [Poliigon](https://www.poliigon.com/);
-достаточно переименовать её. Без файла движок не запустится и честно
-скажет, чего именно не нашёл.
+Движок ждёт один файл — `models/sylvaxe/scene.gltf`. Карту цвета он берёт
+из самой модели, отдельная текстура не нужна. Без файла запуск прервётся
+с сообщением о том, чего именно не нашлось.
 
-Дальше по дорожной карте понадобятся и остальные карты материала —
-`_normal`, `_roughness`, `_metallic`, `_ao`. Наборы с такими картами
-раздают все три сайта выше.
+Использованная модель — [FREE Axe Sylvaxe](https://sketchfab.com/3d-models/free-axe-sylvaxe-47ee9c9f4ef44a489d8521ba9786ad6a)
+за авторством [Wrotzal](https://sketchfab.com/Wrotzal), лицензия
+[CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/). Скачивается
+в формате glTF и распаковывается в `models/sylvaxe/`.
+
+Подойдёт и любая другая модель glTF с атрибутами `POSITION`, `NORMAL`,
+`TEXCOORD_0` и картой цвета в материале — путь задан константой
+в `src/CosmosEngine.cpp`. Бесплатные модели раздают
+[Sketchfab](https://sketchfab.com/features/free-3d-models),
+[Poly Haven](https://polyhaven.com/models) и
+[примеры Khronos](https://github.com/KhronosGroup/glTF-Sample-Models).
 
 ## Управление
 
@@ -82,8 +91,12 @@ core/    Window, Camera, Input                  без единого упоми
 vk/      Context, Swapchain, Allocator, Buffer, Image, Commands,
          RenderPass, Pipeline, Shader, Descriptors
 render/  Renderer, Mesh, Texture, Frame
-scene/   Vertex
+scene/   Vertex, MeshData, ModelData, Primitives, GltfLoader
 ```
+
+Формат файла знает только загрузчик. Он отдаёт `ModelData` — нейтральные
+данные, одинаковые для любого формата, — и дальше про glTF не помнит никто:
+ни движок, ни `Mesh`, ни `Texture`.
 
 Владение однозначное: каждый ресурс принадлежит ровно одному объекту
 и освобождается его деструктором. Копирование запрещено, перемещение
