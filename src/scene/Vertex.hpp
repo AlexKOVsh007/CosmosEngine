@@ -9,7 +9,6 @@
 // Одна вершина модели. Раскладка полей должна совпадать с описанием ниже.
 struct Vertex {
     glm::vec3 position;
-    glm::vec3 color;
     glm::vec2 texCoord;
     // Направление наружу от поверхности: по нему считается освещённость.
     glm::vec3 normal;
@@ -24,8 +23,8 @@ struct Vertex {
     }
 
     // Где внутри вершины лежит каждый вход шейдера; связь идёт по номеру location.
-    static std::array<VkVertexInputAttributeDescription, 4> attributeDescriptions() {
-        return std::array<VkVertexInputAttributeDescription, 4>{
+    static std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions() {
+        return std::array<VkVertexInputAttributeDescription, 3>{
             VkVertexInputAttributeDescription{
                 .location = 0,
                 .binding = 0,
@@ -35,17 +34,11 @@ struct Vertex {
             VkVertexInputAttributeDescription{
                 .location = 1,
                 .binding = 0,
-                .format = VK_FORMAT_R32G32B32_SFLOAT,
-                .offset = offsetof(Vertex, color),
-            },
-            VkVertexInputAttributeDescription{
-                .location = 2,
-                .binding = 0,
                 .format = VK_FORMAT_R32G32_SFLOAT,
                 .offset = offsetof(Vertex, texCoord),
             },
             VkVertexInputAttributeDescription{
-                .location = 3,
+                .location = 2,
                 .binding = 0,
                 .format = VK_FORMAT_R32G32B32_SFLOAT,
                 .offset = offsetof(Vertex, normal),

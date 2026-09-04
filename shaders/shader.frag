@@ -12,10 +12,9 @@ layout(binding = 0) uniform UniformBufferObject {
 layout(binding = 1) uniform sampler2D texSampler;
 
 // Значения приходят уже смешанными: интерполяцию между вершинами делает железо.
-layout(location = 0) in vec3 fragColor;
-layout(location = 1) in vec2 fragTexCoord;
-layout(location = 2) in vec3 fragWorldPosition;
-layout(location = 3) in vec3 fragNormal;
+layout(location = 0) in vec2 fragTexCoord;
+layout(location = 1) in vec3 fragWorldPosition;
+layout(location = 2) in vec3 fragNormal;
 
 layout(location = 0) out vec4 outColor;
 
