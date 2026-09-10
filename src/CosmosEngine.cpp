@@ -14,7 +14,7 @@ constexpr uint32_t windowHeight = 600;
 // По набору дескрипторов на каждый кадр в полёте.
 constexpr uint32_t framesInFlight = 1;
 
-constexpr const char* modelPath = "models/scan/model.obj";
+constexpr const char* modelPath = "models/sylvaxe/scene.gltf";
 
 // Формат может не нести материала вовсе — тогда красим вот этим.
 constexpr const char* fallbackTexture = "textures/gold/basecolor.jpg";

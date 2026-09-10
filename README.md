@@ -17,9 +17,12 @@ Vulkan: сначала руками разбиралась каждая дета
 - Swapchain, render pass, graphics pipeline
 - Буфер глубины, MVP-матрицы, свободная камера (WASD + мышь)
 - Текстуры: staging, layout-переходы барьерами, мип-пирамида, анизотропия
-- Загрузка моделей glTF: геометрия и карта цвета из файла, приведение
-  к единицам и осям сцены
+- Загрузка моделей glTF и OBJ: загрузчик выбирается по расширению,
+  геометрия приводится к единицам и осям сцены
+- Сваривание вершин при загрузке OBJ: тройки индексов формата сводятся
+  к одному индексу на вершину
 - Освещение по Блинну-Фонгу
+- Заставка с логотипом на время загрузки сцены
 - Управление видеопамятью через VMA: суб-аллокация, выбор памяти
   по намерению вместо ручного перебора типов
 
@@ -62,9 +65,11 @@ git, остаётся в ней навсегда и раздувает клон.
 [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/). Скачивается
 в формате glTF и распаковывается в `models/sylvaxe/`.
 
-Подойдёт и любая другая модель glTF с атрибутами `POSITION`, `NORMAL`,
-`TEXCOORD_0` и картой цвета в материале — путь задан константой
-в `src/CosmosEngine.cpp`. Бесплатные модели раздают
+Подойдёт и любая другая модель — glTF с атрибутами `POSITION`, `NORMAL`,
+`TEXCOORD_0` или OBJ рядом с `.mtl`. Путь задан константой
+в `src/CosmosEngine.cpp`; формат выбирается по расширению. Модель без
+материала движок покрасит запасной текстурой из `textures/`.
+Бесплатные модели раздают
 [Sketchfab](https://sketchfab.com/features/free-3d-models),
 [Poly Haven](https://polyhaven.com/models) и
 [примеры Khronos](https://github.com/KhronosGroup/glTF-Sample-Models).
@@ -90,13 +95,15 @@ Escape           отпустить курсор
 core/    Window, Camera, Input                  без единого упоминания Vulkan
 vk/      Context, Swapchain, Allocator, Buffer, Image, Commands,
          RenderPass, Pipeline, Shader, Descriptors
-render/  Renderer, Mesh, Texture, Frame
-scene/   Vertex, MeshData, ModelData, Primitives, GltfLoader
+render/  Renderer, Mesh, Texture, Frame, Splash
+scene/   Vertex, MeshData, ModelData, Primitives,
+         GltfLoader, ObjLoader, ModelLoader
 ```
 
-Формат файла знает только загрузчик. Он отдаёт `ModelData` — нейтральные
-данные, одинаковые для любого формата, — и дальше про glTF не помнит никто:
-ни движок, ни `Mesh`, ни `Texture`.
+Формат файла знает только загрузчик. Каждый отдаёт `ModelData` — нейтральные
+данные, одинаковые для любого формата, — а `ModelLoader` выбирает нужный
+по расширению. Дальше про формат не помнит никто: ни движок, ни `Mesh`,
+ни `Texture`.
 
 Владение однозначное: каждый ресурс принадлежит ровно одному объекту
 и освобождается его деструктором. Копирование запрещено, перемещение
@@ -115,7 +122,9 @@ scene/   Vertex, MeshData, ModelData, Primitives, GltfLoader
 | 17 | resize | пересоздание swapchain |
 | 18 | lighting | нормали, Blinn-Phong |
 | 19 | models | tinygltf |
-| 19a | formats | OBJ и STL, выбор загрузчика по расширению |
+| 19a | formats | OBJ, выбор загрузчика по расширению |
+| 19b | splash | заставка на время загрузки |
+| 19c | stl | формат без индексов и UV |
 | 20 | imgui | ползунки для параметров |
 | 21 | shadows | shadow mapping — второй проход |
 | 22 | objects | матрица и дескрипторы на объект |
