@@ -21,6 +21,7 @@ public:
 
     bool shouldClose() const;
     void pollEvents() const;
+    void show() const;
 
     // У свёрнутого окна нулевой размер: swapchain под него не создать.
     void waitWhileMinimized() const;

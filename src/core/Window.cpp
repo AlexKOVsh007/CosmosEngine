@@ -25,6 +25,9 @@ Window::Window(uint32_t width, uint32_t height, const std::string& title) {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
+    // Скрыто до первого кадра: иначе загрузка выглядит как зависшее пустое окно.
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
     handle = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height),
                               title.c_str(), nullptr, nullptr);
     if (handle == nullptr) {
@@ -33,6 +36,10 @@ Window::Window(uint32_t width, uint32_t height, const std::string& title) {
     }
 
     centerOnPrimaryMonitor();
+}
+
+void Window::show() const {
+    glfwShowWindow(handle);
 }
 
 // Иначе оконный менеджер ставит окно куда захочет.
