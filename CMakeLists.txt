@@ -43,6 +43,8 @@ set(COSMOS_SOURCES
     src/render/Mesh.cpp
     src/scene/Primitives.cpp
     src/scene/GltfLoader.cpp
+    src/scene/ObjLoader.cpp
+    src/scene/ModelLoader.cpp
     src/render/Texture.cpp
     src/render/Frame.cpp
     src/render/Renderer.cpp

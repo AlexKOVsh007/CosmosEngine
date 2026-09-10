@@ -1,6 +1,6 @@
 #include "CosmosEngine.hpp"
 
-#include "scene/GltfLoader.hpp"
+#include "scene/ModelLoader.hpp"
 
 #include <chrono>
 
@@ -12,7 +12,15 @@ constexpr uint32_t windowHeight = 600;
 // По набору дескрипторов на каждый кадр в полёте.
 constexpr uint32_t framesInFlight = 1;
 
-constexpr const char* modelPath = "models/sylvaxe/scene.gltf";
+constexpr const char* modelPath = "models/scan/model.obj";
+
+// Формат может не нести материала вовсе — тогда красим вот этим.
+constexpr const char* fallbackTexture = "textures/gold/basecolor.jpg";
+
+const std::string& textureOf(const ModelData& model) {
+    static const std::string fallback = fallbackTexture;
+    return model.baseColorTexture.empty() ? fallback : model.baseColorTexture;
+}
 
 }  // namespace
 
@@ -32,9 +40,9 @@ CosmosEngine::CosmosEngine()
       fragmentShader(context, "shaders/frag.spv"),
       pipeline(context, renderPass, vertexShader, fragmentShader, descriptors),
       commands(context),
-      model(gltf::load(modelPath)),
+      model(loadModel(modelPath)),
       mesh(allocator, commands, model.mesh),
-      texture(context, allocator, commands, model.baseColorTexture),
+      texture(context, allocator, commands, textureOf(model)),
       renderer(context, swapchain, renderPass, framebuffers, pipeline, mesh, commands,
                allocator, descriptors, texture, camera) {}
 
