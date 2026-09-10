@@ -40,6 +40,12 @@ Swapchain::Swapchain(const Context& ctx, VkSwapchainKHR oldSwapchain) : context(
     imageFormat = chosen.format;
     extent = caps.currentExtent;
 
+    // TRANSFER_DST нужен заставке; surface не обязан его разрешать, поэтому спрашиваем.
+    imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    if ((caps.supportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_DST_BIT) != 0) {
+        imageUsage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+    }
+
     // Минимум + 1: с ровным минимумом программа простаивала бы в ожидании кадра.
     uint32_t imageCount = caps.minImageCount + 1;
     if (caps.maxImageCount > 0 && imageCount > caps.maxImageCount) {
@@ -54,7 +60,7 @@ Swapchain::Swapchain(const Context& ctx, VkSwapchainKHR oldSwapchain) : context(
         .imageColorSpace = chosen.colorSpace,
         .imageExtent = extent,
         .imageArrayLayers = 1,
-        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        .imageUsage = imageUsage,
         .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
         .preTransform = caps.currentTransform,
         .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,

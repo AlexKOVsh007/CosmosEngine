@@ -24,6 +24,7 @@ public:
     VkSwapchainKHR getHandle() const { return swapchain; }
     VkFormat getImageFormat() const { return imageFormat; }
     VkExtent2D getExtent() const { return extent; }
+    VkImageUsageFlags getImageUsage() const { return imageUsage; }
     const std::vector<VkImage>& getImages() const { return images; }
     const std::vector<VkImageView>& getImageViews() const { return imageViews; }
 
@@ -37,6 +38,7 @@ private:
     VkSwapchainKHR swapchain = VK_NULL_HANDLE;
     VkFormat imageFormat = VK_FORMAT_UNDEFINED;
     VkExtent2D extent{};
+    VkImageUsageFlags imageUsage = 0;
 
     // Принадлежат swapchain: создаются и уничтожаются вместе с ним.
     std::vector<VkImage> images;

@@ -33,6 +33,7 @@ public:
     VkImageView getView() const { return view; }
     VkFormat getFormat() const { return format; }
     uint32_t getMipLevels() const { return mipLevels; }
+    VkExtent2D getExtent() const { return extent; }
 
     // Первый из списка, который устройство поддерживает для нужного применения.
     static VkFormat findSupportedFormat(const Context& context,
@@ -61,4 +62,5 @@ private:
     VkImageView view = VK_NULL_HANDLE;
     VkFormat format = VK_FORMAT_UNDEFINED;
     uint32_t mipLevels = 1;
+    VkExtent2D extent{};
 };

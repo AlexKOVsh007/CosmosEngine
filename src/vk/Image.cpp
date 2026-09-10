@@ -18,7 +18,11 @@
 Image::Image(const Context& ctx, const Allocator& allocatorRef, uint32_t width,
              uint32_t height, uint32_t levels, VkFormat imageFormat,
              VkImageUsageFlags usage, VkImageAspectFlags aspect)
-    : context(&ctx), allocator(&allocatorRef), format(imageFormat), mipLevels(levels) {
+    : context(&ctx),
+      allocator(&allocatorRef),
+      format(imageFormat),
+      mipLevels(levels),
+      extent{width, height} {
     const VkImageCreateInfo imageInfo{
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .imageType = VK_IMAGE_TYPE_2D,
@@ -300,7 +304,8 @@ Image::Image(Image&& other) noexcept
       allocation(std::exchange(other.allocation, VK_NULL_HANDLE)),
       view(std::exchange(other.view, VK_NULL_HANDLE)),
       format(std::exchange(other.format, VK_FORMAT_UNDEFINED)),
-      mipLevels(std::exchange(other.mipLevels, 1)) {}
+      mipLevels(std::exchange(other.mipLevels, 1)),
+      extent(std::exchange(other.extent, VkExtent2D{})) {}
 
 Image& Image::operator=(Image&& other) noexcept {
     if (this != &other) {
@@ -312,6 +317,7 @@ Image& Image::operator=(Image&& other) noexcept {
         view = std::exchange(other.view, VK_NULL_HANDLE);
         format = std::exchange(other.format, VK_FORMAT_UNDEFINED);
         mipLevels = std::exchange(other.mipLevels, 1);
+        extent = std::exchange(other.extent, VkExtent2D{});
     }
     return *this;
 }
