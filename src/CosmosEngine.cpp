@@ -1,8 +1,10 @@
 #include "CosmosEngine.hpp"
 
+#include "render/Splash.hpp"
 #include "scene/ModelLoader.hpp"
 
 #include <chrono>
+#include <thread>
 
 namespace {
 
@@ -16,6 +18,26 @@ constexpr const char* modelPath = "models/scan/model.obj";
 
 // Формат может не нести материала вовсе — тогда красим вот этим.
 constexpr const char* fallbackTexture = "textures/gold/basecolor.jpg";
+
+constexpr const char* splashLogo = "assets/logo.png";
+
+// Нижняя граница показа: у лёгкой модели заставка иначе просто мелькнула бы.
+constexpr auto splashMinimum = std::chrono::milliseconds(500);
+
+// Заставка показывается до разбора модели: он занимает заметное время.
+ModelData loadBehindSplash(const Window& window, const Context& context,
+                           const Allocator& allocator, const Commands& commands,
+                           const Swapchain& swapchain, const std::string& path) {
+    window.show();
+    splash::show(context, allocator, commands, swapchain, splashLogo);
+
+    const auto shown = std::chrono::steady_clock::now();
+    ModelData model = loadModel(path);
+
+    // Точка в прошлом — возврат мгновенный, так что долгая загрузка не удлиняется.
+    std::this_thread::sleep_until(shown + splashMinimum);
+    return model;
+}
 
 const std::string& textureOf(const ModelData& model) {
     static const std::string fallback = fallbackTexture;
@@ -40,7 +62,7 @@ CosmosEngine::CosmosEngine()
       fragmentShader(context, "shaders/frag.spv"),
       pipeline(context, renderPass, vertexShader, fragmentShader, descriptors),
       commands(context),
-      model(loadModel(modelPath)),
+      model(loadBehindSplash(window, context, allocator, commands, swapchain, modelPath)),
       mesh(allocator, commands, model.mesh),
       texture(context, allocator, commands, textureOf(model)),
       renderer(context, swapchain, renderPass, framebuffers, pipeline, mesh, commands,

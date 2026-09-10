@@ -45,6 +45,7 @@ set(COSMOS_SOURCES
     src/scene/GltfLoader.cpp
     src/scene/ObjLoader.cpp
     src/scene/ModelLoader.cpp
+    src/render/Splash.cpp
     src/render/Texture.cpp
     src/render/Frame.cpp
     src/render/Renderer.cpp
